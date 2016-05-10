@@ -10,26 +10,43 @@ function GroupedBarChart() {
     var width = 1000;
     var height = 600;
     var xScale = d3.scale.ordinal();
+    var xScale1 = d3.scale.ordinal();   /*is this right?*/
     var yScale = d3.scale.linear();
     var xValue = function(d) {return d[0]};
-    var yValue = function(d) {return d[1]};
+    var yValues = function(d) {return d[1]};
     var xAxis = d3.svg.axis().scale(xScale).orient('bottom');
     var yAxis = d3.svg.axis().scale(yScale).orient('left');
     
     //constructor
     function chart(selection) {
         selection.each(function(data) {
+            
             //Convert data to standard representation greedily;
             //this is needed for nondeterministic accessors.
             data = data.map(function(d, i) {
-                return [xValue.call(data, d, i), yValue.call(data, d, i)];
+                return [xValue.call(data, d, i), yValues.call(data, d, i)];
+            });
+           
+            var groupNames = [];
+            var values = [];
+            var allGroups = [];
+            data[0][1].forEach(function(d) {
+                groupNames.push(Object.keys(d)[0]);
+            });
+            
+            data.forEach(function(d) {
+                allGroups.push(d[0]);
+                d.groups = groupNames.map(function(name, i) {return {name: name, value: +d[1][i][name]}; });
             });
             
             //update xScale
             xScale.domain(data.map(function(d) {return d[0]})).rangeRoundBands([0, (width - margin.left - margin.right)], 0.1);
             
+            //update xScale1
+            xScale1.domain(groupNames).rangeRoundBands([0, xScale.rangeBand()]);
+            
             //update yScale
-            yScale.domain([0, d3.max(data, function(d) {return d[1]})]).range([height - margin.top - margin.bottom, 0]);
+            yScale.domain([0, 11]).range([height - margin.top - margin.bottom, 0]);
             
             //Select the svg element, if it exists.
             var svg = d3.select(this).selectAll('svg').data([data]);
@@ -59,26 +76,33 @@ function GroupedBarChart() {
             //update y-axis    
             g.select('.y.axis')
                 .call(yAxis);
+                
+            var barGroups = gEnter.selectAll('.group')
+                            .data([data])
+                            .enter().append('g')
+                            .attr('class', 'group')
+                            .attr('transform', function(d, i) {return 'translate(' + xScale(d[i][0]) + ', 0)'});
             
-            var bars = gEnter.selectAll('rect')
-                            .data(data);           
+            var bars = barGroups.selectAll('rect')
+                            .data(function(d, i) {return d[i].groups});           
             
             bars.enter().append('rect')
-                    .attr('x', function(d) {return xScale(d[0])})
-                    .attr('y', height + margin.top)
-                    .attr('width', xScale.rangeBand())
-                    .attr('title', function(d) {return d[0]})
-                    .attr('height', 0);
+                    .attr('x', function(d) {return xScale1(d.name)})
+                    .attr('y', height - margin.top - margin.bottom)
+                    .attr('width', xScale1.rangeBand())
+                    .attr('height', 0)
+                    .attr('fill', 'red')
+                    .attr('opacity', 0.5);
                     
             bars.exit().remove();
             
             bars.transition().duration(1000)
-                    .attr('x', function(d) {return xScale(d[0])})
-                    .attr('y', function(d) {return yScale(d[1])})
-                    .attr('width', xScale.rangeBand())
+                    .attr('x', function(d) {return xScale1(d.name)})
+                    .attr('y', function(d) {return yScale(+d.value)})
+                    .attr('width', xScale1.rangeBand())
                     .attr('fill', 'red')
                     .attr('opacity', 0.5)
-                    .attr('height', function(d) {return (height - margin.top - margin.bottom) - yScale(d[1])});
+                    .attr('height', function(d) {return (height - margin.top - margin.bottom) - yScale(+d.value)});
             
         });
     }
@@ -111,11 +135,12 @@ function GroupedBarChart() {
     };
     
     //specifies column id from data to use as values for y
-    chart.y = function(val) {
+    //takes array of objects as parameter
+    chart.y = function(arr) {
         if (!arguments.length) {
-            return yValue;
+            return yValues;
         }
-        yValue = val;
+        yValues = arr;
         return chart;
     };
    
