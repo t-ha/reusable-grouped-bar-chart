@@ -16,6 +16,7 @@ function GroupedBarChart() {
     var yValues = function(d) {return d[1]};
     var xAxis = d3.svg.axis().scale(xScale).orient('bottom');
     var yAxis = d3.svg.axis().scale(yScale).orient('left');
+    var color = d3.scale.category10();
     
     //constructor
     function chart(selection) {
@@ -26,6 +27,8 @@ function GroupedBarChart() {
             data = data.map(function(d, i) {
                 return [xValue.call(data, d, i), yValues.call(data, d, i)];
             });
+            
+            console.log(data);
            
             var groupNames = [];
             var values = [];
@@ -41,19 +44,15 @@ function GroupedBarChart() {
             
             //update xScale
             xScale.domain(data.map(function(d) {return d[0]})).rangeRoundBands([0, (width - margin.left - margin.right)], 0.1);
-            console.log(xScale.domain());
             
             //update xScale1
             xScale1.domain(groupNames).rangeRoundBands([0, xScale.rangeBand()]);
-            console.log(xScale1.domain());
             
             //update yScale
             yScale.domain([0, d3.max(values)]).range([height - margin.top - margin.bottom, 0]);
-            console.log(yScale.domain());
             
-            console.log([data]);
             //Select the svg element, if it exists.
-            var svg = d3.select(this).selectAll('svg').data(data);
+            var svg = d3.select(this).selectAll('svg').data([data]);
             
             //otherwise create skeletal chart
             var gEnter = svg.enter().append("svg").append("g");
@@ -95,8 +94,8 @@ function GroupedBarChart() {
                     .attr('y', height - margin.top - margin.bottom)
                     .attr('width', xScale1.rangeBand())
                     .attr('height', 0)
-                    .attr('fill', 'red')
-                    .attr('opacity', 0.5);
+                    .attr('fill', function(d) {return color(d.name)})
+                    .attr('opacity', 1);
                     
             bars.exit().remove();
             
@@ -104,8 +103,8 @@ function GroupedBarChart() {
                     .attr('x', function(d) {return xScale1(d.name)})
                     .attr('y', function(d) {return yScale(+d.value)})
                     .attr('width', xScale1.rangeBand())
-                    .attr('fill', 'red')
-                    .attr('opacity', 0.5)
+                    .attr('fill', function(d) {return color(d.name)})
+                    .attr('opacity', 1)
                     .attr('height', function(d) {return (height - margin.top - margin.bottom) - yScale(+d.value)});
             
         });
@@ -145,6 +144,14 @@ function GroupedBarChart() {
             return yValues;
         }
         yValues = arr;
+        return chart;
+    };
+    
+    chart.colorScale = function(arr) {
+        if(!arguments.length) {
+            return color;
+        }
+        color = arr;
         return chart;
     };
    
