@@ -7,14 +7,15 @@ var graph = GroupedBarChart()
                         {freq3: +d.freq3}
                     ];
                 })
-                .colorScale([
-                    '#7ECEFD',
-                    '#FF0000',
-                    '#CA7350'
-                ]);
+                .width(1200)
+                .height(800);
+                // .colorScale([
+                //     '#7ECEFD',
+                //     '#FF0000',
+                //     '#CA7350'
+                // ]);
 
 d3.csv('data/test.csv', function(data) {
-    console.log(data);
     d3.select('#vis')
         .datum(data)
         .call(graph);

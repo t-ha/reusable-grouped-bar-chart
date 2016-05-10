@@ -29,8 +29,6 @@ function GroupedBarChart() {
             data = data.map(function(d, i) {
                 return [xValue.call(data, d, i), yValues.call(data, d, i)];
             });
-            
-            console.log(data);
            
             var groupNames = [];
             var values = [];
@@ -46,6 +44,7 @@ function GroupedBarChart() {
             
             //update xScale
             xScale.domain(data.map(function(d) {return d[0]})).rangeRoundBands([0, (width - margin.left - margin.right)], 0.1);
+            console.log(xScale.domain());
             
             //update xScale1
             xScale1.domain(groupNames).rangeRoundBands([0, xScale.rangeBand()]);
@@ -83,13 +82,14 @@ function GroupedBarChart() {
                 .call(yAxis);
                 
             var barGroups = gEnter.selectAll('.group')
-                            .data([data])
+                            .data(data)
                             .enter().append('g')
                             .attr('class', 'group')
-                            .attr('transform', function(d, i) {return 'translate(' + xScale(d[i][0]) + ', 0)'});
+                            .attr('title', function(d) {console.log(d[0]); return d[0]})
+                            .attr('transform', function(d) {return 'translate(' + xScale(d[0]) + ', 0)'});
             
             var bars = barGroups.selectAll('rect')
-                            .data(function(d, i) {return d[i].groups});           
+                            .data(function(d, i) {return d.groups});           
             
             bars.enter().append('rect')
                     .attr('x', function(d) {return xScale1(d.name)})
