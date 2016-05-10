@@ -1,5 +1,5 @@
 .axis text {
-    font: 10px sans-serif;
+    font: 15px sans-serif;
 }
 
 .axis path,
@@ -7,4 +7,9 @@
     fill: none;
     stroke: #000;
     shape-rendering: crispEdges;
+}
+
+.title {
+    font: 20px sans-serif;
+    font-weight: bold;
 }

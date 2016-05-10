@@ -7,8 +7,10 @@ var graph = GroupedBarChart()
                         {freq3: +d.freq3}
                     ];
                 })
-                .width(1200)
-                .height(800);
+                .width(600)
+                .height(450)
+                .xLabel('x axis')
+                .yLabel('y axis');
                 // .colorScale([
                 //     '#7ECEFD',
                 //     '#FF0000',

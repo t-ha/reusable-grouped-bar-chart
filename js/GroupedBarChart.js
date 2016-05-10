@@ -16,6 +16,8 @@ function GroupedBarChart() {
     var yValues = function(d) {return d[1]};
     var xAxis = d3.svg.axis().scale(xScale).orient('bottom');
     var yAxis = d3.svg.axis().scale(yScale).orient('left');
+    var xAxisLabel = '';
+    var yAxisLabel = '';
     var color = d3.scale.ordinal()
                     .domain(xScale.domain())
                     .range(['#225378', '#EB7F00', '#ACF0F2']);
@@ -60,6 +62,18 @@ function GroupedBarChart() {
             gEnter.append('g').attr('class', 'x axis');
             gEnter.append('g').attr('class', 'y axis');
             
+            //update x axis text
+            var xText = svg.append('text')
+                            .attr('class', 'title')
+                            .attr('transform', 'translate(' + ((width - margin.left - margin.right) / 2) + ', ' + (height - margin.bottom + 40) + ')')
+                            .text(xAxisLabel);
+            
+            //update y axis text                
+            var yText = svg.append('text')
+                            .attr('class', 'title')
+                            .attr('transform', 'translate(' + (margin.left - 30) + ', ' + (((height - margin.top - margin.bottom) / 2) + margin.top) + ') rotate(-90)')
+                            .text(yAxisLabel);
+            
             //update outer dimensions
             svg.attr('width', width)
                 .attr('height', height);
@@ -85,7 +99,7 @@ function GroupedBarChart() {
                             .data(data)
                             .enter().append('g')
                             .attr('class', 'group')
-                            .attr('title', function(d) {console.log(d[0]); return d[0]})
+                            .attr('title', function(d) {return d[0]})
                             .attr('transform', function(d) {return 'translate(' + xScale(d[0]) + ', 0)'});
             
             var bars = barGroups.selectAll('rect')
@@ -155,6 +169,24 @@ function GroupedBarChart() {
             return color;
         }
         color.range(arr);
+        return chart;
+    };
+    
+    //set x axis label
+    chart.xLabel = function(str) {
+        if(!arguments.length) {
+            return xAxisLabel;
+        }
+        xAxisLabel = str;
+        return chart;
+    };
+    
+    //set y axis label
+    chart.yLabel = function(str) {
+        if(!arguments.length) {
+            return yAxisLabel;
+        }
+        yAxisLabel = str;
         return chart;
     };
    
