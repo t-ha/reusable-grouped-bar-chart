@@ -29,27 +29,31 @@ function GroupedBarChart() {
            
             var groupNames = [];
             var values = [];
-            var allGroups = [];
+            
+            //get names of categories within each group
             data[0][1].forEach(function(d) {
                 groupNames.push(Object.keys(d)[0]);
             });
             
             data.forEach(function(d) {
-                allGroups.push(d[0]);
-                d.groups = groupNames.map(function(name, i) {return {name: name, value: +d[1][i][name]}; });
+                d.groups = groupNames.map(function(name, i) {values.push(+d[1][i][name]); return {name: name, value: +d[1][i][name]}; });
             });
             
             //update xScale
             xScale.domain(data.map(function(d) {return d[0]})).rangeRoundBands([0, (width - margin.left - margin.right)], 0.1);
+            console.log(xScale.domain());
             
             //update xScale1
             xScale1.domain(groupNames).rangeRoundBands([0, xScale.rangeBand()]);
+            console.log(xScale1.domain());
             
             //update yScale
-            yScale.domain([0, 11]).range([height - margin.top - margin.bottom, 0]);
+            yScale.domain([0, d3.max(values)]).range([height - margin.top - margin.bottom, 0]);
+            console.log(yScale.domain());
             
+            console.log([data]);
             //Select the svg element, if it exists.
-            var svg = d3.select(this).selectAll('svg').data([data]);
+            var svg = d3.select(this).selectAll('svg').data(data);
             
             //otherwise create skeletal chart
             var gEnter = svg.enter().append("svg").append("g");

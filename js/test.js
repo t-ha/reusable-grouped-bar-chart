@@ -3,11 +3,10 @@ var graph = GroupedBarChart()
                 .y(function(d) {
                     return [
                         {freq1: +d.freq1},
-                        {freq2: +d.freq2}
+                        {freq2: +d.freq2},
+                        {freq3: +d.freq3}
                     ];
-                })
-                .width(900)
-                .height(500);
+                });
 
 d3.csv('data/test.csv', function(data) {
     d3.select('#vis')
