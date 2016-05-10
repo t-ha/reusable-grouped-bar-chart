@@ -16,7 +16,9 @@ function GroupedBarChart() {
     var yValues = function(d) {return d[1]};
     var xAxis = d3.svg.axis().scale(xScale).orient('bottom');
     var yAxis = d3.svg.axis().scale(yScale).orient('left');
-    var color = d3.scale.category10();
+    var color = d3.scale.ordinal()
+                    .domain(xScale.domain())
+                    .range(['#225378', '#EB7F00', '#ACF0F2']);
     
     //constructor
     function chart(selection) {
@@ -147,11 +149,12 @@ function GroupedBarChart() {
         return chart;
     };
     
+    //color by ordinal category. takes an array as parameter
     chart.colorScale = function(arr) {
         if(!arguments.length) {
             return color;
         }
-        color = arr;
+        color.range(arr);
         return chart;
     };
    
