@@ -13,10 +13,14 @@ function GroupedBarChart() {
     var yScale = d3.scale.linear();
     var xValue = function(d) {return d[0]};
     var yValue = function(d) {return d[1]};
+    var xAxis = d3.svg.axis().scale(xScale).orient('bottom');
+    var yAxis = d3.svg.axis().scale(yScale).orient('left');
     
     //constructor
     function chart(selection) {
         selection.each(function(data) {
+            //Convert data to standard representation greedily;
+            //this is needed for nondeterministic accessors.
             data = data.map(function(d, i) {
                 return [xValue.call(data, d, i), yValue.call(data, d, i)];
             });
@@ -30,18 +34,34 @@ function GroupedBarChart() {
             //Select the svg element, if it exists.
             var svg = d3.select(this).selectAll('svg').data([data]);
             
+            //otherwise create skeletal chart
+            var gEnter = svg.enter().append("svg").append("g");
+            gEnter.append('g').attr('class', 'x axis');
+            gEnter.append('g').attr('class', 'y axis');
+            
+            //update outer dimensions
             svg.attr('width', width)
                 .attr('height', height);
-                
-            var gEnter = svg.enter().append("svg").append("g");
-                
+            
+            //update inner dimensions  
             gEnter.attr('width', width - margin.left - margin.right)
                 .attr('height', height - margin.top - margin.bottom)
                 .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
+                
+            var g = svg.selectAll('g');
+            
+            //update x-axis    
+            g.select('.x.axis')
+                .attr('transform', 'translate(0, ' + (height - margin.bottom - margin.top) + ')')
+                .attr('title', 'xaxis')
+                .call(xAxis);
+
+            //update y-axis    
+            g.select('.y.axis')
+                .call(yAxis);
             
             var bars = gEnter.selectAll('rect')
-                            .data(data);
-                            
+                            .data(data);           
             
             bars.enter().append('rect')
                     .attr('x', function(d) {return xScale(d[0])})
