@@ -22,6 +22,7 @@ function GroupedBarChart() {
                     .domain(xScale.domain())
                     .range(['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '##8c564b', '#e377c2', '#7f7f7f', '#bcbd22', ' #17becf']);
     var isLegend = false;
+    var titlePadding = 40;
     
     //constructor
     function chart(selection) {
@@ -142,12 +143,12 @@ function GroupedBarChart() {
                 .call(yAxis);
                 
             g.select('.x-title')
-                .attr('transform', 'translate(' + ((width - margin.left - margin.right) / 2) + ', ' + (height - margin.bottom) + ')')
+                .attr('transform', 'translate(' + (((width - margin.right - margin.left) / 2) - (titlePadding / 2)) + ', ' + (height - margin.bottom - titlePadding) + ')')
                 .attr('class', 'title')
                 .text(xAxisLabel);
                 
             g.select('.y-title')
-                .attr('transform', 'translate(-40, ' + (((height - margin.top - margin.bottom) / 2) + margin.top) + ') rotate(-90)')
+                .attr('transform', 'translate(' + (-1 * titlePadding) + ', ' + ((height - margin.bottom) / 2) + ') rotate(-90)')
                 .attr('class', 'title')
                 .text(yAxisLabel);
 

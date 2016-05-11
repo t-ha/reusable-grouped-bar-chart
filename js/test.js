@@ -94,6 +94,16 @@ $(function() {
         .showLegend(true);
         chartWrapper.datum([data2]).call(graph);
     });
+    
+    $('#button2').on('click', function() {
+        graph.y(function(d) {
+            return [
+                {freq1: +d.freq1}
+            ];
+        })
+        .showLegend(true);
+        chartWrapper.datum([data2]).call(graph);
+    });
 });
                         
 

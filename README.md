@@ -71,7 +71,4 @@ var chart = GroupedBarChart()
 \# *GroupedBarChart*.**showLegend**(bool)
 > If `bool` is true, a legend for the chart becomes visible and hidden when `bool` is false. `bool` is false by default.
 
-\# *GroupedBarChart*.**showToolTip**(bool)
-> If `bool` is true, tooltips are enabled for the chart. Tooltips are disabled when `bool` is false. `bool` is true by default.
-
 
