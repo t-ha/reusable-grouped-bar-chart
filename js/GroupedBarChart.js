@@ -46,16 +46,13 @@ function GroupedBarChart() {
                 categoryNames.push(d[0]);
             });
             
-            console.log(groupNames);
-            console.log(categoryNames);
-            
             data.forEach(function(d) {
                 d.groups = groupNames.map(function(name, i) {values.push(+d[1][i][name]); return {name: name, value: +d[1][i][name]}; });
                 d.categories = categoryNames.map(function(cat) {return {category: cat}});
             });
             
             //update xScale
-            xScale.domain(data.map(function(d) {console.log(d[0]); return d[0]})).rangeRoundBands([0, (width - margin.left - margin.right)], 0.1);
+            xScale.domain(data.map(function(d) {return d[0]})).rangeRoundBands([0, (width - margin.left - margin.right)], 0.1);
             
             //update xScale1
             xScale1.domain(groupNames).rangeRoundBands([0, xScale.rangeBand()]);
@@ -65,13 +62,21 @@ function GroupedBarChart() {
             
             //Select the svg element, if it exists.
             var svg = d3.select(this).selectAll('svg').data([data]);
-            console.log(data);
             
             //otherwise create skeletal chart
             var gEnter = svg.enter().append("svg").append("g");
             gEnter.append('g').attr('class', 'x axis');
             gEnter.append('g').attr('class', 'y axis');
             
+            //update outer dimensions
+            svg.attr('width', width)
+                .attr('height', height);
+            
+            //update inner dimensions
+            var otherG = svg.select('g')
+                            .attr('title', 'inner')
+                            .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
+                            
             //update x axis text
             var xText = svg.append('text')
                             .attr('class', 'title')
@@ -83,14 +88,10 @@ function GroupedBarChart() {
                             .attr('class', 'title')
                             .attr('transform', 'translate(' + (margin.left - 30) + ', ' + (((height - margin.top - margin.bottom) / 2) + margin.top) + ') rotate(-90)')
                             .text(yAxisLabel);
-            
-            //update outer dimensions
-            svg.attr('width', width)
-                .attr('height', height);
-            
-            //update inner dimensions  
+              
             gEnter.attr('width', width - margin.left - margin.right)
                 .attr('height', height - margin.top - margin.bottom)
+                .attr('title', 'genter')
                 .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
                 
             var g = svg.selectAll('g');
@@ -99,22 +100,30 @@ function GroupedBarChart() {
             g.select('.x.axis')
                 .attr('transform', 'translate(0, ' + (height - margin.bottom - margin.top) + ')')
                 .attr('title', 'xaxis')
+                .transition()
+                .duration(1000)
                 .call(xAxis);
 
             //update y-axis    
             g.select('.y.axis')
+                .transition()
+                .duration(1000)
                 .call(yAxis);
-    
-            var barGroups = gEnter.selectAll('.group')
+            
+            console.log(data);
+            var barGroups = otherG.selectAll('.group')
                             .data(data);
-                            
-            barGroups.exit().remove();
                             
             barGroups.enter().append('g')
                         .attr('class', 'group')
                         .attr('title', function(d) {return d[0]})
-                        .attr('transform', function(d) {return 'translate(' + xScale(d[0]) + ', 0)'});
+                        .attr('transform', function(d) {console.log(xScale(d[0])); return 'translate(' + xScale(d[0]) + ', 0)'});
                         
+            barGroups.exit().remove();
+            
+            barGroups.transition().duration(1000)
+                        .attr('transform', function(d) {console.log(xScale(d[0])); return 'translate(' + xScale(d[0]) + ', 0)'});
+                                   
             var bars = barGroups.selectAll('rect')
                             .data(function(d) {return d.groups});  
             
