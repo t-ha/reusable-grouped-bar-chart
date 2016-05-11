@@ -23,6 +23,7 @@ var data = [
     }
 ];
 
+//instance of GroupedBarChart
 var chart = GroupedBarChart()
                 .x(function(d) {return d.id;}) //sets x values to 'id'
                 .y(function(d) {return [       //sets y values to 'val1' and 'val2'
@@ -59,10 +60,18 @@ var chart = GroupedBarChart()
 > Specifies which column(s) in the data set to make each bar. Accepts an array of objects as a parameter where each key in an object is a column name from the dataset and each value is a corresponding value in that column.
 
 \# *GroupedBarChart*.**colorScale**(arr)
-> Encodes each bar to it's own color. Accepts an array of strings as a parameter where each string is a hexidecimal color value.
+> Sets color scale to `arr` where `arr` is an array of strings and each string is a hexidecimal color value.
 
 \# *GroupedBarChart*.**xLabel**(str)
 > Sets the label of the x-axis to `str`
 
 \# *GroupedBarChart*.**yLabel**(str)
 > Sets the label of the y-axis to `str`
+
+\# *GroupedBarChart*.**showLegend**(bool)
+> If `bool` is true, a legend for the chart becomes visible and hidden when `bool` is false. `bool` is false by default.
+
+\# *GroupedBarChart*.**showToolTip**(bool)
+> If `bool` is true, tooltips are enabled for the chart. Tooltips are disabled when `bool` is false. `bool` is true by default.
+
+
