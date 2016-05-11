@@ -54,10 +54,10 @@ var chart = GroupedBarChart()
 > Sets the height of the chart to `value` and returns that chart instance.
 
 \# *GroupedBarChart*.**x**(value)
-> Specifies which column in the data set to use for the x-axis
+> Specifies which identifier in the data set to use for the x-axis
 
 \# *GroupedBarChart*.**y**(arr)
-> Specifies which column(s) in the data set to make each bar. Accepts an array of objects as a parameter where each key in an object is a column name from the dataset and each value is a corresponding value in that column.
+> Specifies which identifier(s) in the data set to use to make each bar. Accepts an array of objects as a parameter.
 
 \# *GroupedBarChart*.**colorScale**(arr)
 > Sets color scale to `arr` where `arr` is an array of strings and each string is a hexidecimal color value.
