@@ -1,6 +1,6 @@
 # reusable-grouped-bar-chart API Reference
 
-A reusable grouped bar chart.
+A reusable grouped bar chart function.
 
 ## Usage
 
