@@ -18,6 +18,7 @@ function GroupedBarChart() {
     var yAxis = d3.svg.axis().scale(yScale).orient('left');
     var xAxisLabel = '';
     var yAxisLabel = '';
+    var showTip = true;
     var color = d3.scale.ordinal()
                     .domain(xScale.domain())
                     .range(['#225378', '#EB7F00', '#ACF0F2']);
@@ -28,11 +29,12 @@ function GroupedBarChart() {
             
             //Convert data to standard representation greedily;
             //this is needed for nondeterministic accessors.
-            data = data.map(function(d, i) {
+            data = data[0].map(function(d, i) {
                 return [xValue.call(data, d, i), yValues.call(data, d, i)];
             });
-           
+            
             var groupNames = [];
+            var categoryNames = [];
             var values = [];
             
             //get names of categories within each group
@@ -41,12 +43,19 @@ function GroupedBarChart() {
             });
             
             data.forEach(function(d) {
+                categoryNames.push(d[0]);
+            });
+            
+            console.log(groupNames);
+            console.log(categoryNames);
+            
+            data.forEach(function(d) {
                 d.groups = groupNames.map(function(name, i) {values.push(+d[1][i][name]); return {name: name, value: +d[1][i][name]}; });
+                d.categories = categoryNames.map(function(cat) {return {category: cat}});
             });
             
             //update xScale
-            xScale.domain(data.map(function(d) {return d[0]})).rangeRoundBands([0, (width - margin.left - margin.right)], 0.1);
-            console.log(xScale.domain());
+            xScale.domain(data.map(function(d) {console.log(d[0]); return d[0]})).rangeRoundBands([0, (width - margin.left - margin.right)], 0.1);
             
             //update xScale1
             xScale1.domain(groupNames).rangeRoundBands([0, xScale.rangeBand()]);
@@ -56,6 +65,7 @@ function GroupedBarChart() {
             
             //Select the svg element, if it exists.
             var svg = d3.select(this).selectAll('svg').data([data]);
+            console.log(data);
             
             //otherwise create skeletal chart
             var gEnter = svg.enter().append("svg").append("g");
@@ -94,16 +104,19 @@ function GroupedBarChart() {
             //update y-axis    
             g.select('.y.axis')
                 .call(yAxis);
-                
+    
             var barGroups = gEnter.selectAll('.group')
-                            .data(data)
-                            .enter().append('g')
-                            .attr('class', 'group')
-                            .attr('title', function(d) {return d[0]})
-                            .attr('transform', function(d) {return 'translate(' + xScale(d[0]) + ', 0)'});
-            
+                            .data(data);
+                            
+            barGroups.exit().remove();
+                            
+            barGroups.enter().append('g')
+                        .attr('class', 'group')
+                        .attr('title', function(d) {return d[0]})
+                        .attr('transform', function(d) {return 'translate(' + xScale(d[0]) + ', 0)'});
+                        
             var bars = barGroups.selectAll('rect')
-                            .data(function(d, i) {return d.groups});           
+                            .data(function(d) {return d.groups});  
             
             bars.enter().append('rect')
                     .attr('x', function(d) {return xScale1(d.name)})
@@ -112,7 +125,7 @@ function GroupedBarChart() {
                     .attr('height', 0)
                     .attr('fill', function(d) {return color(d.name)})
                     .attr('opacity', 1);
-                    
+        
             bars.exit().remove();
             
             bars.transition().duration(1000)
@@ -189,6 +202,15 @@ function GroupedBarChart() {
         yAxisLabel = str;
         return chart;
     };
+    
+    //shows tooltip if param = true
+    // chart.showToolTip = function(bool) {
+    //     if(!arguments.length) {
+    //         return showTip;
+    //     }
+    //     showTip = bool;
+    //     return chart;
+    // };
    
   return chart;
 }
