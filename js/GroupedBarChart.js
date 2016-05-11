@@ -18,10 +18,10 @@ function GroupedBarChart() {
     var yAxis = d3.svg.axis().scale(yScale).orient('left');
     var xAxisLabel = '';
     var yAxisLabel = '';
-    var showTip = true;
     var color = d3.scale.ordinal()
                     .domain(xScale.domain())
-                    .range(['#225378', '#EB7F00', '#ACF0F2']);
+                    .range(['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '##8c564b', '#e377c2', '#7f7f7f', '#bcbd22', ' #17becf']);
+    var isLegend = false;
     
     //constructor
     function chart(selection) {
@@ -79,18 +79,6 @@ function GroupedBarChart() {
             var otherG = svg.select('g')
                             .attr('title', 'inner')
                             .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
-                            
-            // //update x axis text
-            // var xText = svg.append('text')
-            //                 .attr('class', 'title')
-            //                 .attr('transform', 'translate(' + ((width - margin.left - margin.right) / 2) + ', ' + (height - margin.bottom + 40) + ')')
-            //                 .text(xAxisLabel);
-            
-            // //update y axis text                
-            // var yText = svg.append('text')
-            //                 .attr('class', 'title')
-            //                 .attr('transform', 'translate(' + (margin.left - 30) + ', ' + (((height - margin.top - margin.bottom) / 2) + margin.top) + ') rotate(-90)')
-            //                 .text(yAxisLabel);
               
             gEnter.attr('width', width - margin.left - margin.right)
                 .attr('height', height - margin.top - margin.bottom)
@@ -98,6 +86,46 @@ function GroupedBarChart() {
                 .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
                 
             var g = svg.selectAll('g');
+            
+            var legend = otherG.selectAll('.legend')
+                            .data(color.range().slice(0, groupNames.length));
+                            
+            legend.enter().append('g')
+                    .attr('class', 'legend')
+                    .attr('transform', function(d, i) {return 'translate(-30, ' + (i * 19) + ')'});
+                            
+            legend.append('rect')
+                    .attr('x', width - margin.right - 28)
+                    .attr('width', 18)
+                    .attr('height', 18)
+                    .style('visibility', function(d) {    
+                        if(!isLegend) {
+                            return 'hidden';
+                        } else {
+                            return 'visible';
+                        }
+                    })
+                    .attr('fill', function(d, i) {return (color.range())[i]; });
+                    
+            legend.append('text')
+                    .attr('x', width - margin.right - 9)
+                    .attr('y', 9)
+                    .attr("dy", ".35em")
+                    .attr('class', 'legend-text')
+                    .style('visibility', function(d) {    
+                        if(!isLegend) {
+                            return 'hidden';
+                        } else {
+                            return 'visible';
+                        }
+                    })
+                    .style("text-anchor", "start")
+                    .text(function(d, i) {
+                        return groupNames[i];
+                    });
+                    
+            legend.exit().remove();
+                    
             
             //update x-axis    
             g.select('.x.axis')
@@ -122,8 +150,7 @@ function GroupedBarChart() {
                 .attr('transform', 'translate(-40, ' + (((height - margin.top - margin.bottom) / 2) + margin.top) + ') rotate(-90)')
                 .attr('class', 'title')
                 .text(yAxisLabel);
-            
-            console.log(data);
+
             var barGroups = otherG.selectAll('.group')
                             .data(data);
                             
@@ -234,14 +261,13 @@ function GroupedBarChart() {
         return chart;
     };
     
-    //shows tooltip if param = true
-    // chart.showToolTip = function(bool) {
-    //     if(!arguments.length) {
-    //         return showTip;
-    //     }
-    //     showTip = bool;
-    //     return chart;
-    // };
+    chart.showLegend = function(bool) {
+        if(!arguments.length) {
+            return isLegend;
+        }
+        isLegend = bool;
+        return chart;
+    };
    
   return chart;
 }

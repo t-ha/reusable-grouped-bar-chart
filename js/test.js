@@ -76,7 +76,8 @@ $(function() {
                         right: 80
                     })
                     .xLabel('x axis')
-                    .yLabel('y axis');
+                    .yLabel('y axis')
+                    .showLegend(false);
 
     var chartWrapper = d3.select('#vis')
                         .datum([dataset])
@@ -89,7 +90,8 @@ $(function() {
                 {freq2: +d.freq2},
                 {freq3: +d.freq3}
             ];
-        });
+        })
+        .showLegend(true);
         chartWrapper.datum([data2]).call(graph);
     });
 });

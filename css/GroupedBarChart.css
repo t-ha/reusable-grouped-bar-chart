@@ -12,3 +12,15 @@
 .title {
     font: 20px sans-serif;
 }
+
+.hidden {
+    visibility: hidden;
+}
+
+.visible {
+    visibility: visible;
+}
+
+.legend-text {
+    font: 15px sans-serif;
+}
