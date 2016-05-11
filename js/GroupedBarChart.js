@@ -65,8 +65,11 @@ function GroupedBarChart() {
             
             //otherwise create skeletal chart
             var gEnter = svg.enter().append("svg").append("g");
+            
             gEnter.append('g').attr('class', 'x axis');
             gEnter.append('g').attr('class', 'y axis');
+            gEnter.append('text').attr('class', 'x-title');
+            gEnter.append('text').attr('class', 'y-title');
             
             //update outer dimensions
             svg.attr('width', width)
@@ -77,17 +80,17 @@ function GroupedBarChart() {
                             .attr('title', 'inner')
                             .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
                             
-            //update x axis text
-            var xText = svg.append('text')
-                            .attr('class', 'title')
-                            .attr('transform', 'translate(' + ((width - margin.left - margin.right) / 2) + ', ' + (height - margin.bottom + 40) + ')')
-                            .text(xAxisLabel);
+            // //update x axis text
+            // var xText = svg.append('text')
+            //                 .attr('class', 'title')
+            //                 .attr('transform', 'translate(' + ((width - margin.left - margin.right) / 2) + ', ' + (height - margin.bottom + 40) + ')')
+            //                 .text(xAxisLabel);
             
-            //update y axis text                
-            var yText = svg.append('text')
-                            .attr('class', 'title')
-                            .attr('transform', 'translate(' + (margin.left - 30) + ', ' + (((height - margin.top - margin.bottom) / 2) + margin.top) + ') rotate(-90)')
-                            .text(yAxisLabel);
+            // //update y axis text                
+            // var yText = svg.append('text')
+            //                 .attr('class', 'title')
+            //                 .attr('transform', 'translate(' + (margin.left - 30) + ', ' + (((height - margin.top - margin.bottom) / 2) + margin.top) + ') rotate(-90)')
+            //                 .text(yAxisLabel);
               
             gEnter.attr('width', width - margin.left - margin.right)
                 .attr('height', height - margin.top - margin.bottom)
@@ -109,6 +112,16 @@ function GroupedBarChart() {
                 .transition()
                 .duration(1000)
                 .call(yAxis);
+                
+            g.select('.x-title')
+                .attr('transform', 'translate(' + ((width - margin.left - margin.right) / 2) + ', ' + (height - margin.bottom) + ')')
+                .attr('class', 'title')
+                .text(xAxisLabel);
+                
+            g.select('.y-title')
+                .attr('transform', 'translate(-40, ' + (((height - margin.top - margin.bottom) / 2) + margin.top) + ') rotate(-90)')
+                .attr('class', 'title')
+                .text(yAxisLabel);
             
             console.log(data);
             var barGroups = otherG.selectAll('.group')
@@ -117,12 +130,12 @@ function GroupedBarChart() {
             barGroups.enter().append('g')
                         .attr('class', 'group')
                         .attr('title', function(d) {return d[0]})
-                        .attr('transform', function(d) {console.log(xScale(d[0])); return 'translate(' + xScale(d[0]) + ', 0)'});
+                        .attr('transform', function(d) {return 'translate(' + xScale(d[0]) + ', 0)'});
                         
             barGroups.exit().remove();
             
             barGroups.transition().duration(1000)
-                        .attr('transform', function(d) {console.log(xScale(d[0])); return 'translate(' + xScale(d[0]) + ', 0)'});
+                        .attr('transform', function(d) {return 'translate(' + xScale(d[0]) + ', 0)'});
                                    
             var bars = barGroups.selectAll('rect')
                             .data(function(d) {return d.groups});  
@@ -146,7 +159,16 @@ function GroupedBarChart() {
                     .attr('height', function(d) {return (height - margin.top - margin.bottom) - yScale(+d.value)});
             
         });
-    }
+    };
+    
+    //set margins
+    chart.margin = function(margins) {
+        if(!arguments.length) {
+            return margin;
+        }
+        margin = margins;
+        return chart;
+    };
     
     //set width of chart if parameter, returns current width otherwise
     chart.width = function(val) {

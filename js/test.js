@@ -67,8 +67,14 @@ $(function() {
                             {freq2: +d.freq2}
                         ];
                     })
-                    .width(800)
-                    .height(500)
+                    .width(1000)
+                    .height(800)
+                    .margin({
+                        top: 80,
+                        left: 80,
+                        bottom: 80,
+                        right: 80
+                    })
                     .xLabel('x axis')
                     .yLabel('y axis');
 
@@ -80,7 +86,8 @@ $(function() {
         graph.y(function(d) {
             return [
                 {freq1: +d.freq1},
-                {freq2: +d.freq2}
+                {freq2: +d.freq2},
+                {freq3: +d.freq3}
             ];
         });
         chartWrapper.datum([data2]).call(graph);
