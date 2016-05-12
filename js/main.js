@@ -11,7 +11,7 @@ $(function() {
 				.height(800)
 				.xLabel('id value')
 				.yLabel('Value')
-				.colorScale(['#29C5FF', '#1297E0', 'rgb(0, 71, 144)'])
+				.colorScale(['#FFCF4B', '#F39C12', 'rgb(200, 100, 0)'])
 				.margin({
 					top: 50,
 					left: 60,
